@@ -1,6 +1,7 @@
 package com.sample.recyclerview;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         storeList = findViewById(R.id.store_list);
         storeList.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        storeList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         Intent intent = getIntent();
         double longitude = intent.getDoubleExtra("longitude", 0);

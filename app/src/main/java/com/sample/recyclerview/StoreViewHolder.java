@@ -21,8 +21,17 @@ public class StoreViewHolder extends RecyclerView.ViewHolder {
     public void bind(Store store) {
         name.setText(store.name);
         address.setText(store.addr);
-        remainStat.setText(store.remain_stat);
-        createdAt.setText(store.created_at);
-        stockAt.setText(store.stock_at);
+        remainStat.setText(getStockDesc(store.remain_stat));
+        createdAt.setText("업데이트: " + store.created_at);
+        stockAt.setText("재고입고: " + store.stock_at);
+    }
+
+    private String getStockDesc(String remainStat) {
+        if ("plenty".equals(remainStat)) return "재고 100개 이상";
+        if ("some".equals(remainStat)) return "재고 30개 이상";
+        if ("few".equals(remainStat)) return "재고 2개 이상";
+        if ("empty".equals(remainStat)) return "재고 0 ~ 1개";
+        if ("break".equals(remainStat)) return "판매중지";
+        return null;
     }
 }
