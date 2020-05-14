@@ -3,4 +3,9 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+    <color name="stockPlenty">#61C655</color>
+    <color name="stockSome">#F7BE50</color>
+    <color name="stockFew">#EE6B60</color>
+    <color name="stockEmpty">#DBDBDB</color>
+    <color name="stockBreak">#DBDBDB</color>
 </resources>
