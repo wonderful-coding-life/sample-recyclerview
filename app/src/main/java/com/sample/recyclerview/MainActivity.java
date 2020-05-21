@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import java.util.Collections;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,7 +46,13 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<StoreSaleResult> call, Response<StoreSaleResult> response) {
                 if (response.code() == 200) {
                     StoreSaleResult result = response.body();
-                    StoreAdapter adapter = new StoreAdapter(result.stores);
+                    // sort by stat
+                    // Collections.sort(result.stores);
+                    // sort by name
+                    //Collections.sort(result.stores, new Store.NameSorter());
+                    // sort by distance
+                    // Collections.sort(result.stores, new Store.DistanceSorter(latitude, longitude));
+                    StoreAdapter adapter = new StoreAdapter(result.stores, latitude, longitude);
                     storeList.setAdapter(adapter);
                 }
             }

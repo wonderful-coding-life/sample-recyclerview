@@ -9,9 +9,12 @@ import java.util.List;
 
 public class StoreAdapter extends RecyclerView.Adapter<StoreViewHolder> {
     private List<Store> storeList;
+    private double latitude, longitude;
 
-    public StoreAdapter(List<Store> storeList) {
+    public StoreAdapter(List<Store> storeList, double latitude, double longitude) {
         this.storeList = storeList;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     @NonNull
@@ -24,7 +27,10 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull StoreViewHolder holder, int position) {
-        holder.bind(storeList.get(position));
+        Store store = storeList.get(position);
+        double distance = Util.getDistance(latitude, longitude, store.lat, store.lng);
+        String distanceText = Util.getDistanceAsText(distance);
+        holder.bind(store, distanceText);
     }
 
     @Override

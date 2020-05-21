@@ -42,11 +42,18 @@ public class Store implements Comparable<Store> {
         }
     }
 
-    public static class StockAtSorter implements Comparator<Store> {
+    public static class DistanceSorter implements Comparator<Store> {
+        private double latitude, longitude;
+
+        public DistanceSorter(double latitude, double longitude) {
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
         public int compare(Store store1, Store store2) {
-            store1.stock_at = (store1.stock_at == null) ? "" : store1.stock_at;
-            store2.stock_at = (store2.stock_at == null) ? "" : store2.stock_at;
-            return store1.stock_at.compareTo(store2.stock_at);
+            double distance1 = Util.getDistance(latitude, longitude, store1.lat, store1.lng);
+            double distance2 = Util.getDistance(latitude, longitude, store2.lat, store2.lng);
+            return (int) (distance1 - distance2);
         }
     }
 }
