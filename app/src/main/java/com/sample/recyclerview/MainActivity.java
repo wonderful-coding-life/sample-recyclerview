@@ -8,9 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
-
-import java.util.Collections;
+import android.widget.RadioGroup;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,7 +17,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView storeList;
+    private StoreAdapter storeAdapter;
+    private RadioGroup sortGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,29 @@ public class MainActivity extends AppCompatActivity {
         storeList = findViewById(R.id.store_list);
         storeList.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         storeList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        sortGroup = findViewById(R.id.sort_group);
+        sortGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.sort_distance:
+                        if (storeAdapter != null) {
+                            storeAdapter.sortByDistance();
+                        }
+                        break;
+                    case R.id.sort_stat:
+                        if (storeAdapter != null) {
+                            storeAdapter.sortByStat();
+                        }
+                        break;
+                    case R.id.sort_name:
+                        if (storeAdapter != null) {
+                            storeAdapter.sortByName();
+                        }
+                        break;
+                }
+            }
+        });
 
         Intent intent = getIntent();
         double longitude = intent.getDoubleExtra("longitude", 0);
@@ -46,14 +70,8 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<StoreSaleResult> call, Response<StoreSaleResult> response) {
                 if (response.code() == 200) {
                     StoreSaleResult result = response.body();
-                    // sort by stat
-                    // Collections.sort(result.stores);
-                    // sort by name
-                    //Collections.sort(result.stores, new Store.NameSorter());
-                    // sort by distance
-                    // Collections.sort(result.stores, new Store.DistanceSorter(latitude, longitude));
-                    StoreAdapter adapter = new StoreAdapter(result.stores, latitude, longitude);
-                    storeList.setAdapter(adapter);
+                    storeAdapter = new StoreAdapter(result.stores, latitude, longitude);
+                    storeList.setAdapter(storeAdapter);
                 }
             }
 

@@ -5,6 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.Collections;
 import java.util.List;
 
 public class StoreAdapter extends RecyclerView.Adapter<StoreViewHolder> {
@@ -15,6 +17,23 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreViewHolder> {
         this.storeList = storeList;
         this.latitude = latitude;
         this.longitude = longitude;
+
+        Collections.sort(storeList, new Store.DistanceSorter(latitude, longitude));
+    }
+
+    public void sortByDistance() {
+        Collections.sort(storeList, new Store.DistanceSorter(latitude, longitude));
+        notifyDataSetChanged();
+    }
+
+    public void sortByName() {
+        Collections.sort(storeList, new Store.NameSorter());
+        notifyDataSetChanged();
+    }
+
+    public void sortByStat() {
+        Collections.sort(storeList);
+        notifyDataSetChanged();
     }
 
     @NonNull
