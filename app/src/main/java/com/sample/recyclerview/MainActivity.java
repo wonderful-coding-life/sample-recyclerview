@@ -19,8 +19,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView storeList;
-    private StoreAdapter storeAdapter;
-    private RadioGroup sortGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,29 +30,6 @@ public class MainActivity extends AppCompatActivity {
         storeList = findViewById(R.id.store_list);
         storeList.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         storeList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        sortGroup = findViewById(R.id.sort_group);
-        sortGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.sort_distance:
-                        if (storeAdapter != null) {
-                            storeAdapter.sortByDistance();
-                        }
-                        break;
-                    case R.id.sort_stat:
-                        if (storeAdapter != null) {
-                            storeAdapter.sortByStat();
-                        }
-                        break;
-                    case R.id.sort_name:
-                        if (storeAdapter != null) {
-                            storeAdapter.sortByName();
-                        }
-                        break;
-                }
-            }
-        });
 
         Intent intent = getIntent();
         double longitude = intent.getDoubleExtra("longitude", 0);
@@ -62,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         fetchStoreSales(longitude, latitude, 5000);
     }
 
-    private void fetchStoreSales(final double longitude, final double latitude, int meter) {
+    private void fetchStoreSales(double longitude, double latitude, int meter) {
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://8oi9s0nnth.apigw.ntruss.com").addConverterFactory(GsonConverterFactory.create()).build();
         MaskApi maskApi = retrofit.create(MaskApi.class);
         maskApi.getStoresByGeo(latitude, longitude, meter).enqueue(new Callback<StoreSaleResult>() {
@@ -70,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<StoreSaleResult> call, Response<StoreSaleResult> response) {
                 if (response.code() == 200) {
                     StoreSaleResult result = response.body();
-                    storeAdapter = new StoreAdapter(result.stores, latitude, longitude);
+                    StoreAdapter storeAdapter = new StoreAdapter(result.stores);
                     storeList.setAdapter(storeAdapter);
                 }
             }
