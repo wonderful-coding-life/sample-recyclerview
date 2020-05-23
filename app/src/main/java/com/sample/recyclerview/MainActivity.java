@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +20,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView storeList;
+    private StoreAdapter storeAdapter;
+    private SwipeRefreshLayout refreshLayout;
+    private double longitude, latitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +36,37 @@ public class MainActivity extends AppCompatActivity {
         storeList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         Intent intent = getIntent();
-        double longitude = intent.getDoubleExtra("longitude", 0);
-        double latitude = intent.getDoubleExtra("latitude", 0);
+        longitude = intent.getDoubleExtra("longitude", 0);
+        latitude = intent.getDoubleExtra("latitude", 0);
         fetchStoreSales(longitude, latitude, 5000);
+
+        storeAdapter = new StoreAdapter(latitude, longitude);
+
+        RadioGroup sortRadioGroup = findViewById(R.id.sort_radio_group);
+        sortRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.sort_distance:
+                        storeAdapter.sortByDistance();
+                        break;
+                    case R.id.sort_name:
+                        storeAdapter.sortByName();
+                        break;
+                    case R.id.sort_stat:
+                        storeAdapter.sortByStat();
+                        break;
+                }
+            }
+        });
+
+        refreshLayout = findViewById(R.id.refresh_layout);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchStoreSales(longitude, latitude, 5000);
+            }
+        });
     }
 
     private void fetchStoreSales(double longitude, double latitude, int meter) {
@@ -45,14 +77,19 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<StoreSaleResult> call, Response<StoreSaleResult> response) {
                 if (response.code() == 200) {
                     StoreSaleResult result = response.body();
-                    StoreAdapter storeAdapter = new StoreAdapter(result.stores);
+                    storeAdapter.setList(result.stores);
                     storeList.setAdapter(storeAdapter);
+                }
+                if (refreshLayout.isRefreshing()) {
+                    refreshLayout.setRefreshing(false);
                 }
             }
 
             @Override
             public void onFailure(Call<StoreSaleResult> call, Throwable t) {
-
+                if (refreshLayout.isRefreshing()) {
+                    refreshLayout.setRefreshing(false);
+                }
             }
         });
     }

@@ -9,21 +9,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class StoreViewHolder extends RecyclerView.ViewHolder {
     private ImageView pharmacy;
-    private TextView name, address, createdAt, stockAt;
+    private TextView name, address, distance, createdAt, stockAt;
 
     public StoreViewHolder(@NonNull View itemView) {
         super(itemView);
         pharmacy = itemView.findViewById(R.id.pharmacy);
         name = itemView.findViewById(R.id.name);
         address = itemView.findViewById(R.id.address);
+        distance = itemView.findViewById(R.id.distance);
         createdAt = itemView.findViewById(R.id.created_at);
         stockAt = itemView.findViewById(R.id.stock_at);
     }
 
-    public void bind(Store store) {
+    public void bind(Store store, String distanceAsText) {
         pharmacy.setColorFilter(getStockColor(store.remain_stat));
         name.setText(store.name);
         address.setText(store.addr);
+        distance.setText(distanceAsText);
         createdAt.setText("업데이트: " + store.created_at);
         stockAt.setText("재고입고: " + store.stock_at);
     }
