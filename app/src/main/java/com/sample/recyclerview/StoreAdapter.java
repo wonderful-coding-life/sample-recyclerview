@@ -109,6 +109,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
             intent.putExtra("currentLongitude", longitude);
             intent.putExtra("storeLatitude", store.lat);
             intent.putExtra("storeLongitude", store.lng);
+            intent.putExtra("remainStat", store.remain_stat);
             view.getContext().startActivity(intent);
         }
     }

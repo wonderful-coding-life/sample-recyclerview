@@ -17,7 +17,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="<YOUR_API_KEY>" />
+            android:value="{API Key를 복사하세요}" />
 
         <activity android:name=".SplashActivity">
             <intent-filter>

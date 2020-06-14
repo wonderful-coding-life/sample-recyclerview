@@ -1,6 +1,7 @@
 package com.sample.recyclerview;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private SupportMapFragment mapFragment;
     private double currentLatitude, currentLongitude, storeLatitude, storeLongitude;
+    private String remainStat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +33,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         currentLongitude = getIntent().getDoubleExtra("currentLongitude", 0);
         storeLatitude = getIntent().getDoubleExtra("storeLatitude", 0);
         storeLongitude = getIntent().getDoubleExtra("storeLongitude", 0);
-
-        Log.i("spiderman", ">>> currentLatitude=" + currentLatitude + ", currentLongitude=" + currentLongitude + ", storeLatitude=" + storeLatitude + ", storeLongitude=" + storeLongitude);
+        remainStat = getIntent().getStringExtra("remainStat");
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getView().getViewTreeObserver().addOnGlobalLayoutListener(this);
@@ -46,13 +47,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         LatLng storePosition = new LatLng(storeLatitude, storeLongitude);
 
         googleMap.addMarker(new MarkerOptions().position(currentPosition).title("현재위치"));
-        googleMap.addMarker(new MarkerOptions().position(storePosition).title("약국").icon(BitmapDescriptorFactory.fromResource(R.drawable.poi_pharmacy)));
+
+        int stockIconResource = R.drawable.poi_gray;
+        if ("plenty".equals(remainStat)) {
+            stockIconResource = R.drawable.poi_green;
+        } else if ("some".equals(remainStat)) {
+            stockIconResource = R.drawable.poi_yellow;
+        } else if ("few".equals(remainStat)) {
+            stockIconResource = R.drawable.poi_red;
+        }
+        googleMap.addMarker(new MarkerOptions().position(storePosition).title("약국").icon(BitmapDescriptorFactory.fromResource(stockIconResource)));
 
         LatLngBounds.Builder builder = LatLngBounds.builder();
         builder.include(currentPosition);
         builder.include(storePosition);
         LatLngBounds bounds = builder.build();
-
         googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, convertDpToPixel(100, this)));
     }
 
